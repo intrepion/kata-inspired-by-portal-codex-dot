@@ -14,3 +14,5 @@ P2: source fit did not imply upright destination fit in floor-to-wall crossings.
 Required grounded exit arrival, so flying through an exit volume alone cannot finish a chamber. Corrected linked-view output color conversion. Repeated browser travel found a substep floor-contact obstruction: exits now settle sub-centimeter floor contact before clearance checks, with regression coverage. Cube release while looking down clears the player's support floor. Sparse amber-first render targets are safe during resize.
 
 Findings at initial review: Standards 2 documented findings + 1 maintenance heuristic; Spec 2 confirmed defects. All concrete findings corrected. Final reviewer confirmation recorded after rerun.
+
+Final follow-up at cade94d: Standards confirmed recursive cleanup and principal constants, with only nonblocking literal cleanup remaining; body/drop literals were then named. Spec independently swept edge jumps (zero gateway-free completions) and reproduced off-center rejection (zero crossings), confirming both fixes. No new confirmed defects. GPU lifetime was source-reviewed, not instrumented with profiling.

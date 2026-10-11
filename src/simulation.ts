@@ -21,7 +21,7 @@ export class Simulation{
   const p=this.rayTarget(origin,direction).panel;if(!p)return 'Aim at a marked pale panel';
   if(this.portals[1-slot]?.id===p.id)return 'Panel already occupied';
   const output=p.center.clone().addScaledVector(p.normal,extent(p.normal)+.12);
-  if(this.blocked(output,.28,.85,p.backing))return 'Destination blocked';
+  if(this.blocked(output,Physics.PLAYER_RADIUS_METERS,Physics.PLAYER_HALF_HEIGHT_METERS,p.backing))return 'Destination blocked';
   this.portals[slot]=p;return 'Gateway linked';
  }
  private activeSolids():Solid[]{return this.level.solids;}
@@ -62,14 +62,14 @@ export class Simulation{
    if(input.jump&&grounded&&n===0){b.velocity.y=Physics.JUMP_SPEED_METERS_PER_SECOND;b.grounded=false;}
    b.velocity.y=Math.max(-Physics.MAX_FALL_SPEED_METERS_PER_SECOND,b.velocity.y-Physics.GRAVITY_METERS_PER_SECOND_SQUARED*dt);b.velocity.clampLength(0,Physics.MAX_SPEED_METERS_PER_SECOND);this.integrate(b,dt);
    if(b.position.y<-9){b.position.copy(this.level.spawn);b.velocity.set(0,0,0);b.guard=null;b.cooldown=0;this.respawns++;this.lastEvent='Recovered at chamber start';if(this.held&&this.cube)this.cube.position.copy(b.position);}
-   if(this.cube){if(this.held){this.cube.position.copy(b.position).addScaledVector(this.forward,.95);this.cube.position.y=Math.max(b.position.y-.15,b.position.y+this.forward.y*.95);this.cube.velocity.copy(b.velocity);}else{this.cube.velocity.y=Math.max(-Physics.MAX_FALL_SPEED_METERS_PER_SECOND,this.cube.velocity.y-Physics.GRAVITY_METERS_PER_SECOND_SQUARED*dt);if(this.cube.grounded){this.cube.velocity.x*=.9;this.cube.velocity.z*=.9;}this.integrate(this.cube,dt);if(this.cube.position.y<-9){this.cube=makeBody(this.level.cube!,.43,.43);this.lastEvent='Cube recovered';}}}
+   if(this.cube){if(this.held){this.cube.position.copy(b.position).addScaledVector(this.forward,.95);this.cube.position.y=Math.max(b.position.y-.15,b.position.y+this.forward.y*.95);this.cube.velocity.copy(b.velocity);}else{this.cube.velocity.y=Math.max(-Physics.MAX_FALL_SPEED_METERS_PER_SECOND,this.cube.velocity.y-Physics.GRAVITY_METERS_PER_SECOND_SQUARED*dt);if(this.cube.grounded){this.cube.velocity.x*=.9;this.cube.velocity.z*=.9;}this.integrate(this.cube,dt);if(this.cube.position.y<-9){this.cube=makeBody(this.level.cube!,Physics.CUBE_HALF_SIZE_METERS,Physics.CUBE_HALF_SIZE_METERS);this.lastEvent='Cube recovered';}}}
    this.switchActive=!!(this.cube&&!this.held&&this.level.switch&&Math.hypot(this.cube.position.x-this.level.switch.x,this.cube.position.z-this.level.switch.z)<.9&&Math.abs(this.cube.position.y-this.level.switch.y-.32)<.35);
    const e=this.level.exit;this.complete=b.grounded&&Math.hypot(b.position.x-e.x,b.position.z-e.z)<1.1&&Math.abs(b.position.y-e.y)<1.15&&(!this.level.switch||this.switchActive);
   }
  }
  interact():string{
   if(!this.cube)return 'No relay cube in reach';
-  if(this.held){const drop=this.player.position.clone().addScaledVector(this.forward,1.15);drop.y=Math.max(drop.y,this.player.position.y-this.player.halfHeight+.445);if(this.blocked(drop,.43,.43))return 'No room to set down the cube';this.cube.position.copy(drop);this.cube.velocity.set(0,0,0);this.held=false;return 'Cube released';}
+  if(this.held){const drop=this.player.position.clone().addScaledVector(this.forward,1.15);drop.y=Math.max(drop.y,this.player.position.y-this.player.halfHeight+Physics.CUBE_HALF_SIZE_METERS+Physics.CUBE_DROP_CLEARANCE_METERS);if(this.blocked(drop,Physics.CUBE_HALF_SIZE_METERS,Physics.CUBE_HALF_SIZE_METERS))return 'No room to set down the cube';this.cube.position.copy(drop);this.cube.velocity.set(0,0,0);this.held=false;return 'Cube released';}
   if(this.player.position.distanceTo(this.cube.position)>2.2)return 'Move closer to the cube';
   const ray=new Ray(this.player.position,this.cube.position.clone().sub(this.player.position).normalize());for(const s of this.activeSolids()){const hit=ray.intersectBox(new Box3(s.min,s.max),new Vector3());if(hit&&hit.distanceTo(this.player.position)<this.player.position.distanceTo(this.cube.position)-.5)return 'Cube is behind a wall';}
   this.held=true;return 'Cube secured — E to release';
