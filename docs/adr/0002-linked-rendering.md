@@ -1,0 +1,2 @@
+# One-level linked view
+Render the scene from the camera transformed through each gateway into a render target, hide both gateway surfaces during these passes, and clip geometry behind the exit plane. Project the resulting image using screen coordinates onto the source opening. This gives parallax and a useful view at bounded GPU cost, but the next gateway is blank inside the view and bodies do not render split across planes. No recursive hall-of-mirrors claim.
