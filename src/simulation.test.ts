@@ -45,3 +45,15 @@ it('reversing during the destination guard cannot enter the backing wall',()=>{
 it('looking down while setting down a held cube leaves it above the floor',()=>{
  const s=new Simulation(4);s.player.position.set(-5,.851,7);expect(s.interact()).toContain('secured');s.forward.set(0,-.8,-.6);expect(s.interact()).toBe('Cube released');s.step(.1);expect(s.cube!.position.y).toBeGreaterThanOrEqual(.43);
 });
+it('a floor entry too far off-center cannot emerge outside the upright destination aperture',()=>{
+ const s=new Simulation(3);s.place(0,new Vector3(-3,8,-2),new Vector3(0,-1,0));s.place(1,new Vector3(-3,5,0),new Vector3(-1,0,0));s.player.position.set(-3,.05,-3);s.player.velocity.set(0,-20,0);s.step(.02);expect(s.crossings).toBe(0);expect(s.player.position.x).toBeCloseTo(-3);
+});
+it('the wall-travel gap cannot be jumped without gateways',()=>{
+ const s=new Simulation(0);s.player.position.set(-3,.851,s.level.solids.find(x=>x.id==='near')!.min.z-.25);s.player.grounded=true;s.player.velocity.set(0,0,-5.2);s.step(1/120,{wish:new Vector3(0,0,-1),jump:true});for(let i=0;i<250;i++)s.step(1/120,{wish:new Vector3(0,0,-1)});expect(s.respawns).toBeGreaterThan(0);expect(s.crossings).toBe(0);expect(s.complete).toBe(false);
+});
+it('a late-in-substep wall crossing tolerates normal floor contact at the destination',()=>{
+ const s=new Simulation(0);s.place(0,new Vector3(-3,1.2,6),new Vector3(-1,0,0));s.place(1,new Vector3(-3,1.2,-6),new Vector3(-1,0,0));s.player.position.set(-9.7,.851,6);s.player.velocity.set(-5,0,0);s.step(1/120);expect(s.crossings).toBe(1);expect(s.player.position.y).toBeGreaterThanOrEqual(.85);
+});
+it('a newly blocked destination rejects crossing without sending the player into a solid',async()=>{
+ const {box}=await import('./levels');const s=new Simulation(0);s.place(0,new Vector3(-3,1.2,6),new Vector3(-1,0,0));s.place(1,new Vector3(-3,1.2,-6),new Vector3(-1,0,0));s.level={...s.level,solids:[...s.level.solids,box('obstruction',[-9.2,1.2,-6],[1,3,3])]};s.player.position.set(-9.7,.9,6);s.player.velocity.set(-10,0,0);s.step(.02);expect(s.crossings).toBe(0);expect(s.player.position.z).toBe(6);expect(s.lastEvent).toContain('obstructed');
+});

@@ -1,0 +1,16 @@
+// World distances are meters; simulation time is seconds.
+export const PLAYER_RADIUS_METERS = .28;
+export const PLAYER_HALF_HEIGHT_METERS = .85;
+export const CUBE_HALF_SIZE_METERS = .43;
+export const WALK_SPEED_METERS_PER_SECOND = 5.2;
+export const GROUND_ACCELERATION_METERS_PER_SECOND_SQUARED = 32;
+export const AIR_ACCELERATION_METERS_PER_SECOND_SQUARED = 7;
+export const GRAVITY_METERS_PER_SECOND_SQUARED = 18;
+export const JUMP_SPEED_METERS_PER_SECOND = 6.2;
+export const MAX_FALL_SPEED_METERS_PER_SECOND = 35;
+export const MAX_SPEED_METERS_PER_SECOND = 40;
+export const PHYSICS_STEPS_PER_SECOND = 120;
+export const DESTINATION_GUARD_SECONDS = .12;
+export const EXIT_CLEARANCE_METERS = .08;
+export const COLLISION_SEPARATION_METERS = .001;
+export const FLOOR_CONTACT_TOLERANCE_METERS = .01;

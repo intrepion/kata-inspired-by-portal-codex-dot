@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {frameMatrix,transformPoint,transformVector,type Panel} from './gateway';
 import {Simulation} from './simulation';
+function disposeTree(root:T.Object3D){root.traverse(o=>{const r=o as T.Mesh;if(r.geometry)r.geometry.dispose();if(r.material){const ms=Array.isArray(r.material)?r.material:[r.material];for(const m of ms){for(const value of Object.values(m))if(value instanceof T.Texture)value.dispose();m.dispose();}}});}
 const palette={cyan:0x64e7f5,amber:0xffbf60};
 export class View{
  renderer:T.WebGLRenderer;scene=new T.Scene();camera=new T.PerspectiveCamera(72,1,.045,160);world=new T.Group();portalMeshes:T.Mesh[]=[];targets:T.WebGLRenderTarget[]=[];cube:T.Group|null=null;switchMesh:T.Mesh|null=null;door:T.Group|null=null;materials:T.Material[]=[];reduced=false;
@@ -14,7 +15,7 @@ export class View{
  private label(text:string,color='#c4dce0',size=1.6){const c=document.createElement('canvas');c.width=1024;c.height=256;const ctx=c.getContext('2d')!;ctx.clearRect(0,0,1024,256);ctx.font='600 58px monospace';ctx.textAlign='center';ctx.fillStyle=color;ctx.fillText(text,512,145);const texture=new T.CanvasTexture(c);const mat=new T.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false});this.materials.push(mat);return new T.Mesh(new T.PlaneGeometry(size*4,size),mat);}
  private orient(mesh:T.Object3D,p:Panel){mesh.quaternion.setFromRotationMatrix(frameMatrix(p));}
  build(s:Simulation){
-  this.world.traverse(o=>{if(o instanceof T.Mesh){o.geometry.dispose();const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>{for(const v of Object.values(m))if(v instanceof T.Texture)v.dispose();m.dispose();});}});this.world.clear();this.materials=[];for(const t of this.targets)if(t)t.dispose();this.targets=[];this.portalMeshes=[];this.cube=null;this.switchMesh=null;
+  disposeTree(this.world);this.world.clear();this.materials=[];for(const t of this.targets)if(t)t.dispose();this.targets=[];this.portalMeshes=[];this.cube=null;this.switchMesh=null;
   const wall=this.material(0x253c48),floor=this.material(0x46565c),platform=this.material(0x344a53);
   for(const solid of s.level.solids){const size=solid.max.clone().sub(solid.min),center=solid.max.clone().add(solid.min).multiplyScalar(.5);this.mesh(new T.BoxGeometry(size.x,size.y,size.z),solid.kind==='wall'?wall:solid.kind==='platform'?platform:floor,center);
    if(solid.kind!=='wall'){const grid=new T.GridHelper(Math.max(size.x,size.z),Math.ceil(Math.max(size.x,size.z)),0x708389,0x536970);grid.position.set(center.x,solid.max.y+.006,center.z);grid.scale.set(size.x/Math.max(size.x,size.z),1,size.z/Math.max(size.x,size.z));this.world.add(grid);}
@@ -36,12 +37,12 @@ export class View{
   this.refreshPortals(s);
  }
  refreshPortals(s:Simulation){
-  for(const mesh of this.portalMeshes){this.world.remove(mesh);mesh.geometry.dispose();mesh.material instanceof T.Material&&mesh.material.dispose();}
+  for(const mesh of this.portalMeshes){this.world.remove(mesh);disposeTree(mesh);}
   this.portalMeshes=[];this.targets.forEach(t=>t.dispose());this.targets=[];
   for(let i=0;i<2;i++){
    const p=s.portals[i];if(!p)continue;const rt=new T.WebGLRenderTarget(Math.floor(innerWidth*.65),Math.floor(innerHeight*.65));this.targets[i]=rt;
    const uniforms={view:{value:rt.texture},resolution:{value:new T.Vector2()},linked:{value:!!s.portals[1-i]},tint:{value:new T.Color(i===0?palette.cyan:palette.amber)}};
-   const mat=new T.ShaderMaterial({uniforms,vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'uniform sampler2D view;uniform vec2 resolution;uniform bool linked;uniform vec3 tint;void main(){vec2 uv=gl_FragCoord.xy/resolution;vec3 c=linked?texture2D(view,uv).rgb:tint*.14;gl_FragColor=vec4(c,1.);}',side:T.DoubleSide});
+   const mat=new T.ShaderMaterial({uniforms,vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'uniform sampler2D view;uniform vec2 resolution;uniform bool linked;uniform vec3 tint;void main(){vec2 uv=gl_FragCoord.xy/resolution;vec3 c=linked?texture2D(view,uv).rgb:tint*.14;gl_FragColor=vec4(c,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}',side:T.DoubleSide});
    const shape=new T.Shape();if(i===0){shape.absellipse(0,0,p.width,p.height,0,Math.PI*2,false,0);}else{shape.moveTo(-p.width,-p.height*.65);shape.lineTo(-p.width*.65,-p.height);shape.lineTo(p.width*.65,-p.height);shape.lineTo(p.width,-p.height*.65);shape.lineTo(p.width,p.height*.65);shape.lineTo(p.width*.65,p.height);shape.lineTo(-p.width*.65,p.height);shape.lineTo(-p.width,p.height*.65);shape.closePath();}
    const mesh=new T.Mesh(new T.ShapeGeometry(shape,64),mat);mesh.position.copy(p.center).addScaledVector(p.normal,.045);this.orient(mesh,p);mesh.userData.slot=i;this.world.add(mesh);this.portalMeshes.push(mesh);
    // Ring belongs to the surface group, so replacement disposes it together.

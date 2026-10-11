@@ -1,3 +1,4 @@
+import {PLAYER_RADIUS_METERS,PLAYER_HALF_HEIGHT_METERS} from './physics-constants';
 import {Matrix4,Vector3} from 'three';
 export type Panel={id:string; center:Vector3; normal:Vector3; right:Vector3; up:Vector3; width:number; height:number; backing:string};
 export function frame(id:string,center:number[],normal:number[],backing=id):Panel{
@@ -11,11 +12,11 @@ export function transformVector(v:Vector3,a:Panel,b:Panel):Vector3{
 }
 export function transformPoint(v:Vector3,a:Panel,b:Panel):Vector3{return transformVector(v.clone().sub(a.center),a,b).add(b.center);}
 export function frameMatrix(p:Panel):Matrix4{return new Matrix4().makeBasis(p.right,p.up,p.normal).setPosition(p.center);}
-export function extent(axis:Vector3,radius=.28,halfHeight=.85){return radius*(Math.abs(axis.x)+Math.abs(axis.z))+halfHeight*Math.abs(axis.y);}
-export function fits(point:Vector3,p:Panel,radius=.28,halfHeight=.85){
+export function extent(axis:Vector3,radius=PLAYER_RADIUS_METERS,halfHeight=PLAYER_HALF_HEIGHT_METERS){return radius*(Math.abs(axis.x)+Math.abs(axis.z))+halfHeight*Math.abs(axis.y);}
+export function fits(point:Vector3,p:Panel,radius=PLAYER_RADIUS_METERS,halfHeight=PLAYER_HALF_HEIGHT_METERS){
  const d=point.clone().sub(p.center);return Math.abs(d.dot(p.right))+extent(p.right,radius,halfHeight)<p.width && Math.abs(d.dot(p.up))+extent(p.up,radius,halfHeight)<p.height;
 }
-export function crossing(from:Vector3,to:Vector3,p:Panel,radius=.28,halfHeight=.85):Vector3|null{
+export function crossing(from:Vector3,to:Vector3,p:Panel,radius=PLAYER_RADIUS_METERS,halfHeight=PLAYER_HALF_HEIGHT_METERS):Vector3|null{
  const d0=from.clone().sub(p.center).dot(p.normal),d1=to.clone().sub(p.center).dot(p.normal);
  if(d0<=0||d1>0)return null;
  const hit=from.clone().lerp(to,d0/(d0-d1));return fits(hit,p,radius,halfHeight)?hit:null;
