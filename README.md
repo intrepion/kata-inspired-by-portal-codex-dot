@@ -21,3 +21,7 @@ Desktop Chrome on this Mac is the tested device. Responsive menus are supported;
 
 ## Verification
 `npm test`, `npm run typecheck`, `npm run build`, `npm audit`. CI repeats tests, build and audit. Physics/puzzle tests and Mac browser coverage are recorded separately in [docs/QA.md](docs/QA.md). See [docs/SPEC.md](docs/SPEC.md), [GLOSSARY.md](GLOSSARY.md), and [docs/adr](docs/adr) for acceptance criteria and decisions.
+
+## Play online
+
+[Play the hosted game](https://intrepion.github.io/kata-inspired-by-portal-codex-dot/)
