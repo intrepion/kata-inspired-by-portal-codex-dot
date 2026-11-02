@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "gameId": "kata-inspired-by-portal-codex-dot",
+  "playUrl": "https://intrepion.github.io/kata-inspired-by-portal-codex-dot/",
+  "screenshots": [
+    {
+      "path": "arcade/screenshots/view-01.jpg",
+      "sha256": "db1d8cc821e3772622782776b9e5d077dad18ab581670e09a79bef9d612ed59d",
+      "alt": "A linked portal view in a test chamber",
+      "provenance": {
+        "kind": "existing_repository_capture",
+        "sourcePath": "docs/screenshots/linked-view.jpg",
+        "deployedBuild": null,
+        "captureDate": null
+      }
+    },
+    {
+      "path": "arcade/screenshots/view-02.jpg",
+      "sha256": "f62392f60bf3135d101dc392eedd36af6d7e45fe54ef764bdd8a63b62114bbbd",
+      "alt": "A powered receiver in a test chamber",
+      "provenance": {
+        "kind": "existing_repository_capture",
+        "sourcePath": "docs/screenshots/receiver-powered.jpg",
+        "deployedBuild": null,
+        "captureDate": null
+      }
+    },
+    {
+      "path": "arcade/screenshots/view-03.jpg",
+      "sha256": "293ea452d61984cbd400beb5428bea83cc5632549a81597ea2d7bcd485ccce72",
+      "alt": "A test chamber with a doorway",
+      "provenance": {
+        "kind": "existing_repository_capture",
+        "sourcePath": "docs/screenshots/first-chamber.jpg",
+        "deployedBuild": null,
+        "captureDate": null
+      }
+    }
+  ]
+}

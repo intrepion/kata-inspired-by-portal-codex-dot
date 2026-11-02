@@ -25,3 +25,7 @@ Desktop Chrome on this Mac is the tested device. Responsive menus are supported;
 ## Play online
 
 [Play the hosted game](https://intrepion.github.io/kata-inspired-by-portal-codex-dot/)
+
+## Arcade metadata
+
+See [docs/arcade-metadata.md](docs/arcade-metadata.md) for the game-owned manifest, screenshot provenance, and verification command.
