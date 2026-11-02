@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "workflowCommit": "fbb578c935220a58f26ba91912c83aca6af267f4",
+  "sourceCommit": "ee61a1ac42e60c378a681a9450866265e37dbd19",
+  "runId": "41435614502",
+  "url": "http://127.0.0.1:4276/",
+  "inputs": {
+    "index.html": "d5f72b9830636608401ad7e170fc493bb5b28f60f7c672ca59218a830ddbd06a",
+    "assets/index-CkaHHD1m.js": "40f40701086f389e87ed7b9b783587cee057b16f87a9192bb86366df9cd9c96a",
+    "assets/index-DrqahFv7.css": "9f2ad541377e39b1d83ec08089627e6acfca07ce668a0c507360b2ca721c9e20"
+  },
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 1280,
+    "height": 1000
+  },
+  "screenshots": [
+    "relay-01.png",
+    "relay-02.png"
+  ]
+}
