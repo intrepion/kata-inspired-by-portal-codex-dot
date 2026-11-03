@@ -11,12 +11,12 @@
     "check:arcade": "node scripts/verify-arcade.mjs"
   },
   "dependencies": {
-    "three": "^0.180.0"
+    "three": "^0.187.0"
   },
   "devDependencies": {
-    "@types/three": "^0.180.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.9",
-    "vitest": "^5.0.3"
+    "@types/three": "^0.187.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
   }
 }
